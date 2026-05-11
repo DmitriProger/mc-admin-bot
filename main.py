@@ -6,6 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 
 from app.register_handlers import register_router
+from database.init import init_db
 
 
 async def main():
@@ -20,7 +21,7 @@ async def main():
 
 
 async def start_app(dispatcher: Dispatcher):
-    pass
+    await init_db()
 
 
 async def shutdown(dispatcher: Dispatcher):
