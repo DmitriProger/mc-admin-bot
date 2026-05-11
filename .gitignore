@@ -378,3 +378,4 @@ $RECYCLE.BIN/
 *.lnk
 
 ### User ignore ###
+data.db
