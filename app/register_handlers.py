@@ -7,9 +7,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 
-user_router = Router()
+register_router = Router()
 
 
-@user_router.message(CommandStart())
+@register_router.message(CommandStart())
 async def cmd_start(message: Message):
     await message.answer("Привет!")
