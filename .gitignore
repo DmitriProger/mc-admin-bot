@@ -349,6 +349,7 @@ pyrightconfig.json
 # Ignore all local history of files
 .history
 .ionide
+.vscode
 
 ### Windows ###
 # Windows thumbnail cache files
