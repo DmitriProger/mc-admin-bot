@@ -9,6 +9,7 @@ from aiogram.types import CallbackQuery, Message
 import app.keyboards as kb
 from app.filters import IsApproved, IsNotApproved
 from app.states import ApplicationForm
+from services.topic_service import send_to_topic
 
 register_router = Router()
 register_router.message.filter(IsNotApproved())
@@ -79,10 +80,16 @@ async def process_situation(message: Message, state: FSMContext):
 
 
 @register_router.callback_query(ApplicationForm.rules, F.data == "rules_read")
-async def rules_confirmed(callback: CallbackQuery, state: FSMContext):
+async def rules_confirmed(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await state.update_data(rules=True)
-    data = await state.get_data()
+    data = await state.get_data()  # noqa: F841
     await state.clear()
-
     await callback.message.edit_text("✅ Заявка отправлена! Ждём решения админов 🎉")
     await callback.answer()
+
+    await send_to_topic(
+        bot=bot,
+        data=data,
+        username=callback.from_user.username,
+        user_id=callback.from_user.id,
+    )

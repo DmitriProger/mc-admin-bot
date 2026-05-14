@@ -12,3 +12,12 @@ rules_keyboard = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="✅ Я прочитал правила", callback_data="rules_read")]
     ]
 )
+
+
+def admin_keyboard(user_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="✅ Принять", callback_data=f"accept:{user_id}")],
+            [InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject:{user_id}")],
+        ]
+    )
