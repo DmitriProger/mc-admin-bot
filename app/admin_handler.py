@@ -14,8 +14,9 @@ admin_router.callback_query.filter(IsAdmin())
 
 
 @admin_router.callback_query(F.data.startswith("accept:"))
-async def admin_accept(callback: CallbackQuery):
+async def admin_accept(callback: CallbackQuery, bot: Bot):
     user_id = int(callback.data.split(":")[1])
     nickname = await get_nickname(user_id)
     await callback.answer("Принято!")
     await callback.message.edit_text(f"✅ Игрок {nickname} принят!")
+    await bot.send_message(chat_id=user_id, text="✅ Поздравляем, вы приняты!")
