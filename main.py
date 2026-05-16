@@ -6,6 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 
 from app.register_handlers import register_router
+from app.admin_handler import admin_router
 from database.init import init_db
 
 
@@ -16,7 +17,7 @@ async def main():
     dp.startup.register(start_app)
     dp.shutdown.register(shutdown)
     dp["dp"] = dp
-    dp.include_router(register_router)
+    dp.include_routers(register_router, admin_router)
     await dp.start_polling(bot)
 
 
