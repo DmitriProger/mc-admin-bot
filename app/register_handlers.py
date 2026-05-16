@@ -9,14 +9,17 @@ from aiogram.types import CallbackQuery, Message
 import app.keyboards as kb
 from app.filters import IsApproved, IsNotApproved
 from app.states import ApplicationForm
+from database.queries import new_registration, set_nickname
 from services.topic_service import send_to_topic
 
 register_router = Router()
 register_router.message.filter(IsNotApproved())
+register_router.callback_query.filter(IsNotApproved())
 
 
 @register_router.message(CommandStart())
 async def cmd_start(message: Message):
+    await new_registration(message.from_user.id)
     await message.answer(
         "👋 Привет! Это бот сервера Valorium — ванильное выживание с RP. Чтобы попасть на сервер, оставь заявку ниже 📝",
         reply_markup=kb.register_keyboard,
@@ -35,6 +38,7 @@ async def cmd_submit(callback: CallbackQuery, state: FSMContext):
 @register_router.message(ApplicationForm.nickname)
 async def process_nickname(message: Message, state: FSMContext):
     nickname = message.text
+    await set_nickname(message.from_user.id, nickname)
     await state.update_data(nickname=nickname)
 
     await state.set_state(ApplicationForm.age)
