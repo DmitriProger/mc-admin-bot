@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
+
 from aiogram import Bot
+from dotenv import load_dotenv
 
 import app.keyboards as kb
 
@@ -32,11 +33,3 @@ async def send_to_topic(bot: Bot, data, username, user_id):
         text=text,
         reply_markup=kb.admin_keyboard(user_id),
     )
-
-
-async def admin_accept():
-    pass
-
-
-async def admin_reject():
-    pass
