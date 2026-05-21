@@ -1,15 +1,12 @@
-import asyncio
-import os
-
 from aiogram import Bot, F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 import app.keyboards as kb
-from app.filters import IsApproved, IsNotApproved
+from app.filters import IsApproved, IsNew, IsNotApproved, IsPending
 from app.states import ApplicationForm
-from database.queries import new_registration, set_nickname
+from database.queries import get_user_status, new_registration, set_nickname, set_pending
 from services.topic_service import send_to_topic
 
 register_router = Router()
@@ -19,11 +16,17 @@ register_router.callback_query.filter(IsNotApproved())
 
 @register_router.message(CommandStart())
 async def cmd_start(message: Message):
-    await new_registration(message.from_user.id)
-    await message.answer(
-        "👋 Привет! Это бот сервера Valorium — ванильное выживание с RP. Чтобы попасть на сервер, оставь заявку ниже 📝",
-        reply_markup=kb.register_keyboard,
-    )
+    status = await get_user_status(message.from_user.id)
+    if status == "new":
+        await new_registration(message.from_user.id)
+        await message.answer(
+            "👋 Привет! Это бот сервера Valorium — ванильное выживание с RP. Чтобы попасть на сервер, оставь заявку ниже 📝",
+            reply_markup=kb.register_keyboard,
+        )
+    elif status == "pending":
+        await message.answer("Вы уже подали заявку! Ожидайте решения админа")
+    elif status == "rejected":
+        await message.answer("Ваша заявка отклонена!")
 
 
 @register_router.callback_query(F.data == "submit_application")
@@ -88,6 +91,7 @@ async def rules_confirmed(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await state.update_data(rules=True)
     data = await state.get_data()  # noqa: F841
     await state.clear()
+    await set_pending(callback.from_user.id)
     await callback.message.edit_text("✅ Заявка отправлена! Ждём решения админов 🎉")
     await callback.answer()
 
