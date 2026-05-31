@@ -83,7 +83,10 @@ async def process_situation(message: Message, state: FSMContext):
     await state.update_data(rp_situation=rp_situation)
 
     await state.set_state(ApplicationForm.rules)
-    await message.answer("Правила сервера\nЗаглушка", reply_markup=kb.rules_keyboard)
+    await message.answer(
+        "Правила сервера\nhttps://wiki.valorium.fun/rules/rules.html",
+        reply_markup=kb.rules_keyboard,
+    )
 
 
 @register_router.callback_query(ApplicationForm.rules, F.data == "rules_read")

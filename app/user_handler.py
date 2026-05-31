@@ -13,4 +13,4 @@ user_router.callback_query.filter(IsApproved())
 
 @user_router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer("Привет! Ты попал в меню бота сервера Valorium, \n пока-что тут пусто ;)")
+    await message.answer("Вы попали в главное меню бота. Выберите кнопку:")

@@ -6,7 +6,7 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import CallbackQuery, Message
 
 from app.filters import IsAdmin
-from database.queries import approve_user, reject_user, get_nickname
+from database.queries import approve_user, get_nickname, reject_user
 
 admin_router = Router()
 
@@ -22,10 +22,13 @@ async def admin_accept(callback: CallbackQuery, bot: Bot):
 
     await callback.answer("Принято!")
     try:
-        await callback.message.edit_text(f"✅ Игрок {nickname} принят!")
+        await callback.message.answer(f"✅ Игрок {nickname} принят!")
     except TelegramBadRequest:
         pass
-    await bot.send_message(chat_id=user_id, text="✅ Поздравляем, вы приняты!")
+    await bot.send_message(
+        chat_id=user_id,
+        text="✅ Поздравляем, вы приняты! Нажмите /start для попадания в главное меню",
+    )
 
 
 @admin_router.callback_query(F.data.startswith("reject:"))
@@ -35,7 +38,7 @@ async def admin_reject(callback: CallbackQuery, bot: Bot):
     await reject_user(user_id)
     await callback.answer("Принято!")
     try:
-        await callback.message.edit_text(f"❌ Игрок {nickname} отклонен!")
+        await callback.message.answer(f"❌ Игрок {nickname} отклонен!")
     except TelegramBadRequest:
         pass
 
