@@ -1,6 +1,11 @@
+import logging
+
 import aiosqlite
 
 DB_PATH = "data.db"
+
+
+logger = logging.getLogger(__name__)
 
 
 async def init_db():
@@ -12,3 +17,4 @@ async def init_db():
             )
         """)
         await conn.commit()
+        logger.info("База данных инициализирована")

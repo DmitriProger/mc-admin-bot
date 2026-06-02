@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import CommandStart
@@ -14,6 +16,9 @@ admin_router.message.filter(IsAdmin())
 admin_router.callback_query.filter(IsAdmin())
 
 
+logger = logging.getLogger(__name__)
+
+
 @admin_router.callback_query(F.data.startswith("accept:"))
 async def admin_accept(callback: CallbackQuery, bot: Bot):
     user_id = int(callback.data.split(":")[1])
@@ -21,6 +26,7 @@ async def admin_accept(callback: CallbackQuery, bot: Bot):
     await approve_user(user_id)
 
     await callback.answer("Принято!")
+    logger.info("Админ %s принял игрока %s", callback.from_user.id, nickname)
     try:
         await callback.message.answer(f"✅ Игрок {nickname} принят!")
     except TelegramBadRequest:
@@ -37,6 +43,7 @@ async def admin_reject(callback: CallbackQuery, bot: Bot):
     nickname = await get_nickname(user_id)
     await reject_user(user_id)
     await callback.answer("Принято!")
+    logger.info("Админ %s отклонил игрока %s", callback.from_user.id, nickname)
     try:
         await callback.message.answer(f"❌ Игрок {nickname} отклонен!")
     except TelegramBadRequest:

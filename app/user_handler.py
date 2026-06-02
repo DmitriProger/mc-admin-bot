@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Bot, F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
@@ -13,6 +15,8 @@ user_router = Router()
 user_router.message.filter(IsApproved())
 user_router.callback_query.filter(IsApproved())
 
+logger = logging.getLogger(__name__)
+
 
 @user_router.message(CommandStart())
 async def cmd_start(message: Message):
@@ -26,6 +30,7 @@ async def cmd_start(message: Message):
 
 @user_router.callback_query(F.data == "report")
 async def start_report(callback: CallbackQuery, state: FSMContext):
+    logger.info("Пользователь %s начал репорт", callback.from_user.id)
     await callback.answer("")
     await state.set_state(ReportForm.nick_offender)
     await callback.message.edit_text("Введите ник нарушителя:", reply_markup=kb.cancel_keyboard)
@@ -82,6 +87,7 @@ async def description(message: Message, state: FSMContext, bot: Bot):
     await send_report(bot, data, username, user_id)
     await state.clear()
     await message.answer("Репорт отправлен, ожидайте ответа")
+    logger.info("Пользователь %s отправил репорт", user_id)
 
 
 @user_router.message(ReportForm.description)
@@ -101,3 +107,4 @@ async def to_menu(callback: CallbackQuery, state: FSMContext):
         f"Здравствуйте {nickname}. Вы попали в главное меню, выберите действие",
         reply_markup=kb.user_main,
     )
+    logger.info("Пользователь %s отменил действие", callback.from_user.id)

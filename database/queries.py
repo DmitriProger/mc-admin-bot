@@ -1,6 +1,10 @@
+import logging
+
 import aiosqlite
 
 from database.init import DB_PATH
+
+logger = logging.getLogger(__name__)
 
 
 async def new_registration(tg_id):
@@ -10,6 +14,7 @@ async def new_registration(tg_id):
             (tg_id,),
         )
         await conn.commit()
+        logger.info("Новая регистрация: %s", tg_id)
 
 
 async def get_user_status(tg_id) -> str:
@@ -20,6 +25,7 @@ async def get_user_status(tg_id) -> str:
         ) as cursor:
             row = await cursor.fetchone()
             return row[0] if row else "new"
+        logger.debug("Получен статус пользователя %s: %s", tg_id, row[0] if row else "new")
 
 
 async def set_pending(tg_id):
@@ -29,6 +35,7 @@ async def set_pending(tg_id):
             (tg_id,),
         )
         await conn.commit()
+        logger.info("Статус пользователя %s изменён на pending", tg_id)
 
 
 async def approve_user(tg_id):
@@ -38,6 +45,7 @@ async def approve_user(tg_id):
             (tg_id,),
         )
         await conn.commit()
+        logger.info("Пользователь %s одобрен", tg_id)
 
 
 async def reject_user(tg_id):
@@ -56,6 +64,7 @@ async def set_nickname(tg_id, nickname):
             (nickname, tg_id),
         )
         await conn.commit()
+        logger.info("Пользователь %s отклонён", tg_id)
 
 
 async def get_nickname(tg_id):
@@ -66,3 +75,4 @@ async def get_nickname(tg_id):
         ) as cursor:
             row = await cursor.fetchone()
             return row[0] if row else None
+        logger.debug("Получен ник пользователя %s: %s", tg_id, row[0] if row else None)
