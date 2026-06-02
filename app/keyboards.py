@@ -21,3 +21,36 @@ def admin_keyboard(user_id: int) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject:{user_id}")],
         ]
     )
+
+
+user_main = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="⚖️ Подать репорт", callback_data="report")],
+        [InlineKeyboardButton(text="🤔 Задать вопрос", callback_data="question")],
+    ]
+)
+
+
+cancel_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="❌ Отмена", callback_data="cancel")]]
+)
+
+
+report_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Гриферство", callback_data="Griefing"),
+            InlineKeyboardButton(text="Территории", callback_data="Territories"),
+        ],
+        [
+            InlineKeyboardButton(text="Тех. часть", callback_data="technical"),
+            InlineKeyboardButton(text="Общение", callback_data="communication"),
+        ],
+        [InlineKeyboardButton(text="Другое (напишу сам)", callback_data="other")],
+    ]
+)
+
+
+back_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back")]]
+)
