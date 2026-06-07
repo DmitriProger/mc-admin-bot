@@ -19,6 +19,20 @@ admin_router.callback_query.filter(IsAdmin())
 logger = logging.getLogger(__name__)
 
 
+@admin_router.callback_query(F.data.startswith("answer:"))
+async def admin_answer(callback: CallbackQuery, bot: Bot):
+    user_id = int(callback.data.split(":")[1])
+    # TODO: написать систему ответа на тикет
+    await bot.send_message(chat_id=user_id, text="")
+
+
+@admin_router.callback_query(F.data.startswith("close:"))
+async def admin_close(callback: CallbackQuery, bot: Bot):
+    user_id = int(callback.data.split(":")[1])
+    # TODO: написать систему закрытия тикета
+    await bot.send_message(chat_id=user_id, text="Админ закрыл тикет")
+
+
 @admin_router.callback_query(F.data.startswith("accept:"))
 async def admin_accept(callback: CallbackQuery, bot: Bot):
     user_id = int(callback.data.split(":")[1])

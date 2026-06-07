@@ -14,7 +14,7 @@ rules_keyboard = InlineKeyboardMarkup(
 )
 
 
-def admin_keyboard(user_id: int) -> InlineKeyboardMarkup:
+def admin_app(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="✅ Принять", callback_data=f"accept:{user_id}")],
@@ -54,3 +54,12 @@ report_keyboard = InlineKeyboardMarkup(
 back_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back")]]
 )
+
+
+def admin_report(user_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Ответить", callback_data=f"answer:{user_id}")],
+            [InlineKeyboardButton(text="Закрыть", callback_data=f"close:{user_id}")],
+        ]
+    )

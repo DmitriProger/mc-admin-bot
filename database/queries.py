@@ -76,3 +76,12 @@ async def get_nickname(tg_id):
             row = await cursor.fetchone()
             return row[0] if row else None
         logger.debug("Получен ник пользователя %s: %s", tg_id, row[0] if row else None)
+
+
+async def init_report(tg_id, nick_offender, violation_type, description, status):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute(
+            "INSERT INTO reports(user_id, nick_offender, violation_type, description, status) VALUES (?, ?, ?, ?, ?)",
+            (tg_id, nick_offender, violation_type, description, status),
+        )
+        await conn.commit()

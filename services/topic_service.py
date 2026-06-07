@@ -32,7 +32,7 @@ async def send_to_topic(bot: Bot, data, username, user_id):
         chat_id=ADMIN_CHAT_ID,
         message_thread_id=APPLICATIONS_THREAD_ID,
         text=text,
-        reply_markup=kb.admin_keyboard(user_id),
+        reply_markup=kb.admin_app(user_id),
     )
 
 
@@ -57,7 +57,7 @@ async def send_report(bot: Bot, data, username, user_id):
                 message_thread_id=REPORT_THREAD_ID,
                 photo=first["file_id"],
                 caption=text,
-                reply_markup=kb.admin_keyboard(user_id),
+                reply_markup=kb.admin_report(user_id),
             )
         elif first["type"] == "video":
             await bot.send_video(
@@ -65,7 +65,7 @@ async def send_report(bot: Bot, data, username, user_id):
                 message_thread_id=REPORT_THREAD_ID,
                 video=first["file_id"],
                 caption=text,
-                reply_markup=kb.admin_keyboard(user_id),
+                reply_markup=kb.admin_report(user_id),
             )
 
         for file in files[1:]:
@@ -82,5 +82,5 @@ async def send_report(bot: Bot, data, username, user_id):
             chat_id=ADMIN_CHAT_ID,
             message_thread_id=REPORT_THREAD_ID,
             text=text,
-            reply_markup=kb.admin_keyboard(user_id),
+            reply_markup=kb.admin_report(user_id),
         )
