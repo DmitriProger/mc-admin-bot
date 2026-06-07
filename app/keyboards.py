@@ -56,10 +56,10 @@ back_keyboard = InlineKeyboardMarkup(
 )
 
 
-def admin_report(user_id: int) -> InlineKeyboardMarkup:
+def admin_report(report_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Ответить", callback_data=f"answer:{user_id}")],
-            [InlineKeyboardButton(text="Закрыть", callback_data=f"close:{user_id}")],
+            [InlineKeyboardButton(text="Ответить", callback_data=f"answer:{report_id}")],
+            [InlineKeyboardButton(text="Закрыть", callback_data=f"close:{report_id}")],
         ]
     )

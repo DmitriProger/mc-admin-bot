@@ -8,7 +8,13 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import CallbackQuery, Message
 
 from app.filters import IsAdmin
-from database.queries import approve_user, get_nickname, reject_user
+from database.queries import (
+    add_admin_report,
+    approve_user,
+    get_nickname,
+    get_user_report,
+    reject_user,
+)
 
 admin_router = Router()
 
@@ -21,14 +27,16 @@ logger = logging.getLogger(__name__)
 
 @admin_router.callback_query(F.data.startswith("answer:"))
 async def admin_answer(callback: CallbackQuery, bot: Bot):
-    user_id = int(callback.data.split(":")[1])
+    report_id = int(callback.data.split(":")[1])
+    user_id = await get_user_report(report_id)
     # TODO: написать систему ответа на тикет
     await bot.send_message(chat_id=user_id, text="")
 
 
 @admin_router.callback_query(F.data.startswith("close:"))
 async def admin_close(callback: CallbackQuery, bot: Bot):
-    user_id = int(callback.data.split(":")[1])
+    report_id = int(callback.data.split(":")[1])
+    user_id = await get_user_report(report_id)
     # TODO: написать систему закрытия тикета
     await bot.send_message(chat_id=user_id, text="Админ закрыл тикет")
 

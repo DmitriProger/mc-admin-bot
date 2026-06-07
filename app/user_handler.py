@@ -84,8 +84,10 @@ async def description(message: Message, state: FSMContext, bot: Bot):
     username = message.from_user.username
     user_id = message.from_user.id
 
-    await send_report(bot, data, username, user_id)
-    await init_report(user_id, data["nick_offender"], data["violation_type"], data["description"], status="open")
+    report_id = await init_report(
+        user_id, data["nick_offender"], data["violation_type"], data["description"], status="open"
+    )
+    await send_report(bot, data, username, user_id, report_id)
     await state.clear()
     await message.answer("Репорт отправлен, ожидайте ответа")
     logger.info("Пользователь %s отправил репорт", user_id)

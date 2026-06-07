@@ -80,8 +80,26 @@ async def get_nickname(tg_id):
 
 async def init_report(tg_id, nick_offender, violation_type, description, status):
     async with aiosqlite.connect(DB_PATH) as conn:
-        await conn.execute(
+        cursor = await conn.execute(
             "INSERT INTO reports(user_id, nick_offender, violation_type, description, status) VALUES (?, ?, ?, ?, ?)",
             (tg_id, nick_offender, violation_type, description, status),
         )
         await conn.commit()
+        return cursor.lastrowid
+
+
+# TODO: применить эту функцию
+async def add_admin_report(admin_tg_id, report_id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute("UPDATE reports SET admin_id = ? WHERE id = ?", (admin_tg_id, report_id))
+        await conn.commit()
+
+
+async def get_user_report(id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        async with conn.execute(
+            "SELECT user_id FROM reports WHERE id = ?",
+            (id,),
+        ) as cursor:
+            row = await cursor.fetchone()
+            return row[0] if row else None
