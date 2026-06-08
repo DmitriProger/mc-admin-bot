@@ -124,3 +124,13 @@ async def clear_thread(tg_id):
     async with aiosqlite.connect(DB_PATH) as conn:
         await conn.execute("UPDATE registrations SET topic_id = NULL WHERE tg_id = ?", (tg_id,))
         await conn.commit()
+
+
+async def get_user_id_by_topic(topic_id):
+    async with aiosqlite(DB_PATH) as conn:
+        async with conn.execute(
+            "SELECT tg_id FROM registrations WHERE topic_id = ?",
+            (topic_id,),
+        ) as cursor:
+            row = await cursor.fetchone()
+            return row[0] if row else None
