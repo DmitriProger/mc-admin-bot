@@ -9,7 +9,6 @@ from aiogram.types import CallbackQuery, Message
 
 from app.filters import IsAdmin
 from database.queries import (
-    add_admin_report,
     approve_user,
     get_nickname,
     get_user_report,

@@ -103,3 +103,24 @@ async def get_user_report(id):
         ) as cursor:
             row = await cursor.fetchone()
             return row[0] if row else None
+
+
+async def get_thread(tg_id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        cursor = await conn.execute("SELECT topic_id FROM registrations WHERE tg_id = ?", (tg_id,))
+        row = await cursor.fetchone()
+        return row[0] if row else None
+
+
+async def save_thread(tg_id, topic_id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute(
+            "UPDATE registrations SET topic_id = ? WHERE tg_id = ?", (topic_id, tg_id)
+        )
+        await conn.commit()
+
+
+async def clear_thread(tg_id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute("UPDATE registrations SET topic_id = NULL WHERE tg_id = ?", (tg_id,))
+        await conn.commit()

@@ -10,4 +10,5 @@ dependencies = [
     "asyncio>=4.0.0",
     "dotenv>=0.9.9",
     "rcon>=2.4.9",
+    "ruff>=0.15.16",
 ]
