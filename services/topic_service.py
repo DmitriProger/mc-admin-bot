@@ -9,7 +9,6 @@ from database.queries import get_thread, save_thread
 
 load_dotenv()
 APPLICATIONS_THREAD_ID = int(os.getenv("APPLICATIONS_THREAD_ID"))
-REPORT_THREAD_ID = int(os.getenv("REPORT_THREAD_ID"))
 ADMIN_CHAT_ID = int(os.getenv("SUPER_GROUP_ID"))
 
 
