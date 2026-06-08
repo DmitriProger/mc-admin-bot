@@ -42,6 +42,7 @@ async def send_to_topic(bot: Bot, data, username, user_id):
 
 
 async def send_report(bot: Bot, data, username, user_id, report_id):
+    thread_id = await get_or_create_topic(bot, ADMIN_CHAT_ID, user_id, username or str(user_id))
     text = f"""╭─ 🚨 Новый репорт ─╮
 
 👤 От: @{username} ({user_id})
@@ -59,7 +60,7 @@ async def send_report(bot: Bot, data, username, user_id, report_id):
         if first["type"] == "photo":
             await bot.send_photo(
                 chat_id=ADMIN_CHAT_ID,
-                message_thread_id=REPORT_THREAD_ID,
+                message_thread_id=thread_id,
                 photo=first["file_id"],
                 caption=text,
                 reply_markup=kb.admin_report(report_id),
@@ -67,7 +68,7 @@ async def send_report(bot: Bot, data, username, user_id, report_id):
         elif first["type"] == "video":
             await bot.send_video(
                 chat_id=ADMIN_CHAT_ID,
-                message_thread_id=REPORT_THREAD_ID,
+                message_thread_id=thread_id,
                 video=first["file_id"],
                 caption=text,
                 reply_markup=kb.admin_report(report_id),
@@ -76,16 +77,20 @@ async def send_report(bot: Bot, data, username, user_id, report_id):
         for file in files[1:]:
             if file["type"] == "photo":
                 await bot.send_photo(
-                    chat_id=ADMIN_CHAT_ID, message_thread_id=REPORT_THREAD_ID, photo=file["file_id"]
+                    chat_id=ADMIN_CHAT_ID,
+                    message_thread_id=thread_id,
+                    photo=file["file_id"],
                 )
             elif file["type"] == "video":
                 await bot.send_video(
-                    chat_id=ADMIN_CHAT_ID, message_thread_id=REPORT_THREAD_ID, video=file["file_id"]
+                    chat_id=ADMIN_CHAT_ID,
+                    message_thread_id=thread_id,
+                    video=file["file_id"],
                 )
     else:
         await bot.send_message(
             chat_id=ADMIN_CHAT_ID,
-            message_thread_id=REPORT_THREAD_ID,
+            message_thread_id=thread_id,
             text=text,
             reply_markup=kb.admin_report(report_id),
         )
