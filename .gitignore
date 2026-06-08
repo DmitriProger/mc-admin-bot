@@ -379,4 +379,5 @@ $RECYCLE.BIN/
 
 ### User ignore ###
 .idea
-data.sqlite
+data.db
+test.sqlite

@@ -2,7 +2,7 @@ import logging
 
 import aiosqlite
 
-DB_PATH = "data.sqlite"
+DB_PATH = "data.db"
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ async def init_db():
                 tg_id INTEGER PRIMARY KEY,
                 status TEXT DEFAULT 'new',
                 nickname TEXT UNIQUE,
-                thread_id INTEGER NOT NULL 
+                topic_id INTEGER
             )
         """)
         logger.info("Таблица registrations инициализирована")

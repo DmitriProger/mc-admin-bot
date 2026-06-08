@@ -127,7 +127,7 @@ async def clear_thread(tg_id):
 
 
 async def get_user_id_by_topic(topic_id):
-    async with aiosqlite(DB_PATH) as conn:
+    async with aiosqlite.connect(DB_PATH) as conn:
         async with conn.execute(
             "SELECT tg_id FROM registrations WHERE topic_id = ?",
             (topic_id,),
