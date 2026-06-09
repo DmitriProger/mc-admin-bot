@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Bot, F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
@@ -9,6 +11,7 @@ from app.states import ApplicationForm
 from database.queries import get_user_status, new_registration, set_nickname, set_pending
 from services.topic_service import send_to_topic
 
+logger = logging.getLogger(__name__)
 register_router = Router()
 register_router.message.filter(IsNotApproved())
 register_router.callback_query.filter(IsNotApproved())
@@ -17,6 +20,7 @@ register_router.callback_query.filter(IsNotApproved())
 @register_router.message(CommandStart())
 async def cmd_start(message: Message):
     status = await get_user_status(message.from_user.id)
+    logger.info("Пользователь %s запустил бота, статус: %s", message.from_user.id, status)
     if status == "new":
         await new_registration(message.from_user.id)
         await message.answer(
@@ -83,7 +87,10 @@ async def process_situation(message: Message, state: FSMContext):
     await state.update_data(rp_situation=rp_situation)
 
     await state.set_state(ApplicationForm.rules)
-    await message.answer("Правила сервера\nЗаглушка", reply_markup=kb.rules_keyboard)
+    await message.answer(
+        "Правила сервера\nhttps://wiki.valorium.fun/rules/rules.html",
+        reply_markup=kb.rules_keyboard,
+    )
 
 
 @register_router.callback_query(ApplicationForm.rules, F.data == "rules_read")
@@ -101,3 +108,4 @@ async def rules_confirmed(callback: CallbackQuery, state: FSMContext, bot: Bot):
         username=callback.from_user.username,
         user_id=callback.from_user.id,
     )
+    logger.info("Пользователь %s отправил заявку", callback.from_user.id)

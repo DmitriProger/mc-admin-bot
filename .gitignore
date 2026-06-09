@@ -378,4 +378,6 @@ $RECYCLE.BIN/
 *.lnk
 
 ### User ignore ###
+.idea
 data.db
+test.sqlite
