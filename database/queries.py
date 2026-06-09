@@ -134,3 +134,9 @@ async def get_user_id_by_topic(topic_id):
         ) as cursor:
             row = await cursor.fetchone()
             return row[0] if row else None
+
+
+async def close_report(report_id):
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute("UPDATE reports SET status = 'closed' WHERE id = ?", (report_id,))
+        await conn.commit()
