@@ -15,3 +15,7 @@ class ReportForm(StatesGroup):
     violation_type = State()
     custom_violation = State()
     description = State()
+
+
+class AdminStates(StatesGroup):
+    admin_answer = State()

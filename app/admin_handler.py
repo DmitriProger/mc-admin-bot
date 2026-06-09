@@ -10,12 +10,14 @@ from aiogram.types import CallbackQuery, Message
 from dotenv import load_dotenv
 
 from app.filters import IsAdmin
+from app.states import AdminStates
 from database.queries import (
     approve_user,
     clear_thread,
     close_report,
     get_nickname,
     get_thread,
+    get_user_id_by_topic,
     get_user_report,
     reject_user,
 )
@@ -32,11 +34,24 @@ ADMIN_CHAT_ID = int(os.getenv("SUPER_GROUP_ID"))
 
 
 @admin_router.callback_query(F.data.startswith("answer:"))
-async def admin_answer(callback: CallbackQuery, bot: Bot):
-    report_id = int(callback.data.split(":")[1])
-    user_id = await get_user_report(report_id)
-    # TODO: написать систему ответа на тикет
-    await bot.send_message(chat_id=user_id, text="")
+async def admin_answer(callback: CallbackQuery, bot: Bot, state: FSMContext):
+    await callback.answer()
+    await callback.message.answer("Введите ответ игроку:")
+    await state.set_state(AdminStates.admin_answer)
+    logger.info("Админ %s начал отвечать на тикет", callback.from_user.id)
+
+
+@admin_router.message(AdminStates.admin_answer)
+async def admin_text(message: Message, state: FSMContext, bot: Bot, dp: Dispatcher):
+    await state.update_data(admin_answer=message.text)
+
+    admin_text = await state.get_data()
+    admin_text = admin_text["admin_answer"]
+    thread_id = message.message_thread_id
+    user_id = await get_user_id_by_topic(thread_id)
+    await bot.send_message(chat_id=user_id, text=admin_text)
+    await state.clear()
+    logger.info("Админ %s отправил ответ юзеру %s", message.from_user.id, user_id)
 
 
 @admin_router.callback_query(F.data.startswith("close:"))
@@ -49,6 +64,7 @@ async def admin_close(callback: CallbackQuery, bot: Bot):
     await clear_thread(user_id)
     await callback.answer("Тикет закрыт")
     await bot.send_message(chat_id=user_id, text="Админ закрыл тикет")
+    logger.info("Админ %s закрыл тикет %s юзера %s", callback.from_user.id, report_id, user_id)
 
 
 @admin_router.callback_query(F.data.startswith("accept:"))
