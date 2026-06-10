@@ -14,5 +14,4 @@ async def add_to_whitelist(nickname: str) -> str:
         passwd=os.getenv("RCON_PASSWORD"),
     )
     logger.info("Игрок %s добавлен", nickname)
-    print(response)
     return response

@@ -24,8 +24,8 @@ async def get_user_status(tg_id) -> str:
             (tg_id,),
         ) as cursor:
             row = await cursor.fetchone()
+            logger.debug("Получен статус пользователя %s: %s", tg_id, row[0] if row else "new")
             return row[0] if row else "new"
-        logger.debug("Получен статус пользователя %s: %s", tg_id, row[0] if row else "new")
 
 
 async def set_pending(tg_id):
@@ -64,7 +64,7 @@ async def set_nickname(tg_id, nickname):
             (nickname, tg_id),
         )
         await conn.commit()
-        logger.info("Пользователь %s отклонён", tg_id)
+        logger.info("Ник пользователя %s сохранён", tg_id)
 
 
 async def get_nickname(tg_id):
@@ -74,11 +74,11 @@ async def get_nickname(tg_id):
             (tg_id,),
         ) as cursor:
             row = await cursor.fetchone()
+            logger.debug("Получен ник пользователя %s: %s", tg_id, row[0] if row else None)
             return row[0] if row else None
-        logger.debug("Получен ник пользователя %s: %s", tg_id, row[0] if row else None)
 
 
-async def init_report(tg_id, nick_offender, violation_type, description, status):
+async def create_report(tg_id, nick_offender, violation_type, description, status):
     async with aiosqlite.connect(DB_PATH) as conn:
         cursor = await conn.execute(
             "INSERT INTO reports(user_id, nick_offender, violation_type, description, status) VALUES (?, ?, ?, ?, ?)",
@@ -95,7 +95,7 @@ async def add_admin_report(admin_tg_id, report_id):
         await conn.commit()
 
 
-async def get_user_report(id):
+async def get_report_user_id(id):
     async with aiosqlite.connect(DB_PATH) as conn:
         async with conn.execute(
             "SELECT user_id FROM reports WHERE id = ?",
@@ -105,14 +105,14 @@ async def get_user_report(id):
             return row[0] if row else None
 
 
-async def get_thread(tg_id):
+async def get_topic(tg_id):
     async with aiosqlite.connect(DB_PATH) as conn:
         cursor = await conn.execute("SELECT topic_id FROM registrations WHERE tg_id = ?", (tg_id,))
         row = await cursor.fetchone()
         return row[0] if row else None
 
 
-async def save_thread(tg_id, topic_id):
+async def save_topic(tg_id, topic_id):
     async with aiosqlite.connect(DB_PATH) as conn:
         await conn.execute(
             "UPDATE registrations SET topic_id = ? WHERE tg_id = ?", (topic_id, tg_id)
@@ -120,7 +120,7 @@ async def save_thread(tg_id, topic_id):
         await conn.commit()
 
 
-async def clear_thread(tg_id):
+async def clear_topic(tg_id):
     async with aiosqlite.connect(DB_PATH) as conn:
         await conn.execute("UPDATE registrations SET topic_id = NULL WHERE tg_id = ?", (tg_id,))
         await conn.commit()

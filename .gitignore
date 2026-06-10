@@ -381,3 +381,4 @@ $RECYCLE.BIN/
 .idea
 data.db
 test.sqlite
+data.sqlite

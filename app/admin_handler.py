@@ -3,9 +3,7 @@ import os
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import CallbackQuery, Message
 from dotenv import load_dotenv
 
@@ -13,12 +11,12 @@ from app.filters import IsAdmin
 from app.states import AdminStates
 from database.queries import (
     approve_user,
-    clear_thread,
+    clear_topic,
     close_report,
     get_nickname,
-    get_thread,
+    get_report_user_id,
+    get_topic,
     get_user_id_by_topic,
-    get_user_report,
     reject_user,
 )
 
@@ -57,11 +55,11 @@ async def admin_text(message: Message, state: FSMContext, bot: Bot, dp: Dispatch
 @admin_router.callback_query(F.data.startswith("close:"))
 async def admin_close(callback: CallbackQuery, bot: Bot):
     report_id = int(callback.data.split(":")[1])
-    user_id = await get_user_report(report_id)
-    thread_id = await get_thread(user_id)
+    user_id = await get_report_user_id(report_id)
+    thread_id = await get_topic(user_id)
     await close_report(report_id)
     await bot.delete_forum_topic(chat_id=ADMIN_CHAT_ID, message_thread_id=thread_id)
-    await clear_thread(user_id)
+    await clear_topic(user_id)
     await callback.answer("Тикет закрыт")
     await bot.send_message(chat_id=user_id, text="Админ закрыл тикет")
     logger.info("Админ %s закрыл тикет %s юзера %s", callback.from_user.id, report_id, user_id)
