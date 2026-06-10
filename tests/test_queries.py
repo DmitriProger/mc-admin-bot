@@ -4,17 +4,17 @@ import pytest_asyncio
 import database.init as db_init
 from database.queries import (
     approve_user,
-    clear_thread,
+    clear_topic,
     close_report,
+    create_report,
     get_nickname,
-    get_thread,
+    get_report_user_id,
+    get_topic,
     get_user_id_by_topic,
-    get_user_report,
     get_user_status,
-    init_report,
     new_registration,
     reject_user,
-    save_thread,
+    save_topic,
     set_nickname,
     set_pending,
 )
@@ -65,16 +65,16 @@ async def test_reject_user():
 @pytest.mark.asyncio
 async def test_thread_save_and_clear():
     await new_registration(USER_ID)
-    await save_thread(USER_ID, 42)
-    assert await get_thread(USER_ID) == 42
-    await clear_thread(USER_ID)
-    assert await get_thread(USER_ID) is None
+    await save_topic(USER_ID, 42)
+    assert await get_topic(USER_ID) == 42
+    await clear_topic(USER_ID)
+    assert await get_topic(USER_ID) is None
 
 
 @pytest.mark.asyncio
 async def test_get_user_id_by_topic():
     await new_registration(USER_ID)
-    await save_thread(USER_ID, 99)
+    await save_topic(USER_ID, 99)
     assert await get_user_id_by_topic(99) == USER_ID
     assert await get_user_id_by_topic(0) is None
 
@@ -82,8 +82,8 @@ async def test_get_user_id_by_topic():
 @pytest.mark.asyncio
 async def test_report_lifecycle():
     await new_registration(USER_ID)
-    report_id = await init_report(USER_ID, "Griefer", "Griefing", "Описание", "open")
-    assert await get_user_report(report_id) == USER_ID
+    report_id = await create_report(USER_ID, "Griefer", "Griefing", "Описание", "open")
+    assert await get_report_user_id(report_id) == USER_ID
     await close_report(report_id)
 
 

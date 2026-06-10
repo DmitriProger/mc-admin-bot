@@ -5,7 +5,7 @@ from aiogram import Bot
 from dotenv import load_dotenv
 
 import app.keyboards as kb
-from database.queries import get_thread, save_thread
+from database.queries import get_topic, save_topic
 
 load_dotenv()
 APPLICATIONS_THREAD_ID = int(os.getenv("APPLICATIONS_THREAD_ID"))
@@ -97,13 +97,13 @@ async def send_report(bot: Bot, data, username, user_id, report_id):
 
 async def create_topic(bot: Bot, chat_id, user_id, name):
     topic = await bot.create_forum_topic(chat_id=chat_id, name=name)
-    await save_thread(user_id, topic.message_thread_id)
+    await save_topic(user_id, topic.message_thread_id)
     logger.info("Создан топик thread_id=%s для user_id=%s", topic.message_thread_id, user_id)
     return topic.message_thread_id
 
 
 async def get_or_create_topic(bot: Bot, chat_id, user_id, name):
-    thread_id = await get_thread(user_id)
+    thread_id = await get_topic(user_id)
     logger.debug("get_topic для user_id=%s вернул thread_id=%s", user_id, thread_id)
 
     if thread_id is None:

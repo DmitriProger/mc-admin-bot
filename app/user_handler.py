@@ -8,7 +8,7 @@ from aiogram.types import CallbackQuery, Message
 import app.keyboards as kb
 from app.filters import IsApproved
 from app.states import ReportForm
-from database.queries import get_nickname, init_report
+from database.queries import create_report, get_nickname
 from services.topic_service import send_report
 
 user_router = Router()
@@ -84,7 +84,7 @@ async def description(message: Message, state: FSMContext, bot: Bot):
     username = message.from_user.username
     user_id = message.from_user.id
 
-    report_id = await init_report(
+    report_id = await create_report(
         user_id, data["nick_offender"], data["violation_type"], data["description"], status="open"
     )
     await send_report(bot, data, username, user_id, report_id)

@@ -21,25 +21,24 @@ logger = logging.getLogger(__name__)
 
 
 async def main():
-    bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))  # noqa: F841
+    bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
     logger.info("Диспетчер инициализирован")
-    dp.startup.register(start_app)
+    dp.startup.register(startup)
     dp.shutdown.register(shutdown)
     dp["dp"] = dp
     dp.include_routers(register_router, admin_router, user_router)
     await dp.start_polling(bot)
 
 
-async def start_app(dispatcher: Dispatcher):
+async def startup(dispatcher: Dispatcher):
     logger.info("Бот запущен")
     await init_db()
 
 
 async def shutdown(dispatcher: Dispatcher):
     logger.info("Бот выключен")
-    pass
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 import app.keyboards as kb
-from app.filters import IsApproved, IsNew, IsNotApproved, IsPending
+from app.filters import IsNotApproved
 from app.states import ApplicationForm
 from database.queries import get_user_status, new_registration, set_nickname, set_pending
 from services.topic_service import send_to_topic
@@ -96,7 +96,7 @@ async def process_situation(message: Message, state: FSMContext):
 @register_router.callback_query(ApplicationForm.rules, F.data == "rules_read")
 async def rules_confirmed(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await state.update_data(rules=True)
-    data = await state.get_data()  # noqa: F841
+    data = await state.get_data()
     await state.clear()
     await set_pending(callback.from_user.id)
     await callback.message.edit_text("✅ Заявка отправлена! Ждём решения админов 🎉")

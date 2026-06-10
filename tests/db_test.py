@@ -3,15 +3,15 @@ import os
 
 from database.init import init_db
 from database.queries import (
+    approve_user,
+    clear_topic,
     get_nickname,
+    get_topic,
     get_user_status,
     new_registration,
+    save_topic,
     set_nickname,
     set_pending,
-    approve_user,
-    get_thread,
-    save_thread,
-    clear_thread,
 )
 
 TEST_USER_ID = 999999999
@@ -43,20 +43,18 @@ async def test():
     assert status == "approved", f"❌ status={status}"
     print(f"✅ approve_user OK: {status}")
 
-    await save_thread(TEST_USER_ID, 12345)
-    thread_id = await get_thread(TEST_USER_ID)
+    await save_topic(TEST_USER_ID, 12345)
+    thread_id = await get_topic(TEST_USER_ID)
     assert thread_id == 12345, f"❌ thread_id={thread_id}"
-    print(f"✅ save_thread / get_thread OK: {thread_id}")
+    print(f"✅ save_topic / get_topic OK: {thread_id}")
 
-    await clear_thread(TEST_USER_ID)
-    thread_id = await get_thread(TEST_USER_ID)
+    await clear_topic(TEST_USER_ID)
+    thread_id = await get_topic(TEST_USER_ID)
     assert thread_id is None, f"❌ thread_id={thread_id}, expected None"
-    print(f"✅ clear_thread OK: {thread_id}")
+    print(f"✅ clear_topic OK: {thread_id}")
 
     print("\n✅ Все тесты прошли")
 
 
 if __name__ == "__main__":
     asyncio.run(test())
-
-# Запуск: python -m tests.db_test
