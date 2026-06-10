@@ -2,7 +2,7 @@ import logging
 
 import aiosqlite
 
-DB_PATH = "data.db"
+DB_PATH = "data.sqlite"
 
 
 logger = logging.getLogger(__name__)
